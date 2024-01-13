@@ -18,4 +18,3 @@ CREATE ROLE luster
 
 CREATE ROLE replicator
     WITH REPLICATION LOGIN;
-SELECT pg_create_physical_replication_slot('test_replication_slot')
