@@ -15,7 +15,8 @@ services:
       - db_primary-data:/var/lib/postgresql/data
       - ./db_primary/sql:/docker-entrypoint-initdb.d
       - ./db_primary/conf/pg_hba.conf:/etc/postgresql/pg_hba.conf
-    command: ["-c", "hba_file=/etc/postgresql/pg_hba.conf"]
+      - ./db_primary/conf/postgresql.conf:/etc/postgresql/postgresql.conf
+    command: ["-c", "hba_file=/etc/postgresql/pg_hba.conf", "-c", "config_file=/etc/postgresql/postgresql.conf"]
     healthcheck:
       test: pg_isready -h localhost -d postgres -U postgres
     restart: always
@@ -36,6 +37,8 @@ services:
       - db_replica-data:/var/lib/postgresql/data
       - ./db_replica/sql:/docker-entrypoint-initdb.d
       - ./db_replica/scripts/entrypoint.sh:/entrypoint.sh
+      - ./db_replica/conf/pg_hba.conf:/etc/postgresql/pg_hba.conf
+      - ./db_replica/conf/postgresql.conf:/etc/postgresql/postgresql.conf
     entrypoint: /entrypoint.sh
     healthcheck:
       test: pg_isready -h localhost -d postgres -U postgres
