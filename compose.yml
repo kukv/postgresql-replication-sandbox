@@ -1,0 +1,66 @@
+services:
+  db_primary:
+    image: postgres:latest
+    hostname: db_primary
+    container_name: db_primary
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --locale=C"
+      TZ: "Asia/Tokyo"
+    ports:
+      - 15432:5432
+    volumes:
+      - db_primary-data:/var/lib/postgresql/data
+      - ./db_primary/sql:/docker-entrypoint-initdb.d
+      - ./db_primary/conf/pg_hba.conf:/etc/postgresql/pg_hba.conf
+    command: ["-c", "hba_file=/etc/postgresql/pg_hba.conf"]
+    healthcheck:
+      test: pg_isready -h localhost -d postgres -U postgres
+    restart: always
+
+  db_replica:
+    image: postgres:latest
+    hostname: db_replica
+    container_name: db_replica
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --locale=C"
+      TZ: "Asia/Tokyo"
+    ports:
+      - 25432:5432
+    volumes:
+      - db_replica-data:/var/lib/postgresql/data
+      - ./db_replica/sql:/docker-entrypoint-initdb.d
+      - ./db_replica/scripts/entrypoint.sh:/entrypoint.sh
+    entrypoint: /entrypoint.sh
+    healthcheck:
+      test: pg_isready -h localhost -d postgres -U postgres
+    depends_on:
+      db_primary:
+        condition: service_healthy
+    restart: always
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin
+    ports:
+      - 9999:80
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: a@a.jp
+      PGADMIN_DEFAULT_PASSWORD: 1234
+    depends_on:
+      db_primary:
+        condition: service_healthy
+      db_replica:
+        condition: service_healthy
+
+volumes:
+  db_primary-data:
+  db_replica-data:
+  pgadmin-data:
