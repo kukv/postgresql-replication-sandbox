@@ -17,4 +17,5 @@ CREATE ROLE luster
     PASSWORD 'luster';
 
 CREATE ROLE replicator
-    WITH REPLICATION LOGIN;
+    WITH REPLICATION LOGIN
+    PASSWORD 'replicator';
