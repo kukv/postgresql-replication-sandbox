@@ -4,5 +4,4 @@
 --#########################################
 --# create
 --#########################################
-SELECT pg_create_physical_replication_slot('test_replication_slot')
-
+SELECT pg_create_physical_replication_slot('test_replication_slot');

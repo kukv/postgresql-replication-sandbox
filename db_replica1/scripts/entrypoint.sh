@@ -11,7 +11,7 @@ pg_basebackup \
   -h db_primary \
   -p 5432 \
   -D ${PGDATA} \
-  -S test_replication_slot \
+  -S test1_replication_slot \
   --progress \
   -X stream \
   -U replicator \

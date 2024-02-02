@@ -26,17 +26,33 @@ services:
       - ./db_primary/conf/pg_hba.conf:/etc/postgresql/pg_hba.conf
       - ./db_primary/conf/postgresql.conf:/etc/postgresql/postgresql.conf
 
-  db_replica:
+  db_replica1:
     <<: *postgres-common
-    hostname: db_replica
-    container_name: db_replica
+    hostname: db_replica1
+    container_name: db_replica1
     ports:
       - 25432:5432
     volumes:
-      - ./db_replica/sql:/docker-entrypoint-initdb.d
-      - ./db_replica/scripts/entrypoint.sh:/entrypoint.sh
-      - ./db_replica/conf/pg_hba.conf:/etc/postgresql/pg_hba.conf
-      - ./db_replica/conf/postgresql.conf:/etc/postgresql/postgresql.conf
+      - ./db_replica1/sql:/docker-entrypoint-initdb.d
+      - ./db_replica1/scripts/entrypoint.sh:/entrypoint.sh
+      - ./db_replica1/conf/pg_hba.conf:/etc/postgresql/pg_hba.conf
+      - ./db_replica1/conf/postgresql.conf:/etc/postgresql/postgresql.conf
+    entrypoint: ["/entrypoint.sh"]
+    depends_on:
+      db_primary:
+        condition: service_healthy
+
+  db_replica2:
+    <<: *postgres-common
+    hostname: db_replica2
+    container_name: db_replica2
+    ports:
+      - 35432:5432
+    volumes:
+      - ./db_replica2/sql:/docker-entrypoint-initdb.d
+      - ./db_replica2/scripts/entrypoint.sh:/entrypoint.sh
+      - ./db_replica2/conf/pg_hba.conf:/etc/postgresql/pg_hba.conf
+      - ./db_replica2/conf/postgresql.conf:/etc/postgresql/postgresql.conf
     entrypoint: ["/entrypoint.sh"]
     depends_on:
       db_primary:
