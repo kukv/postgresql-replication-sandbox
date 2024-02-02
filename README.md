@@ -2,6 +2,8 @@
 
 docker x PostgreSQLを利用したストリーミングレプリケーションを手軽に試せるように作ったサンドボックス
 
+ロジカルレプリケーションは[logical-replication](https://github.com/kukv/postgresql-replication-sandbox/tree/logical-replication)ブランチにあり
+
 ## Built With
 
 TODO.
